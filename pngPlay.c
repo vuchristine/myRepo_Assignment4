@@ -36,16 +36,24 @@ int main(int argc, char *argv[]){
 			 	i+=2;
 			}
 			else{
-				fprintf(stderr,"pngPlay -g -r degrees -i inputfile -o outputfile  ");
+				fprintf(stderr,"pngPlay -g -r degrees -i inputfile -o outputfile -b -s  ");
 				exit(0);
 			}	
 		}		
   pixMap *p=pixMap_init_filename(inputfile);
   if(degrees)pixMap_rotate(p,degrees);
   if(grayFlag)pixMap_gray(p);
-  if(convertToBmp)pixMap_write_bmp16(p, outputfile);//convert and write to output file
-  if(sortPixels)pixMap_sort(p);//sort pixels by color
-  pixMap_write(p,outputfile);
+  
+  //sort pixels by color
+  if(sortPixels)pixMap_sort(p);
+  
+  //convert and write to output file
+  if(convertToBmp){
+  	pixMap_write_bmp16(p, outputfile);
+  } else {
+  	pixMap_write(p,outputfile);
+  }
+  
   pixMap_destroy(p);
   return 0;
 }

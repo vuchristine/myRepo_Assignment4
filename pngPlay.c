@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
   pixMap *p=pixMap_init_filename(inputfile);
   if(degrees)pixMap_rotate(p,degrees);
   if(grayFlag)pixMap_gray(p);
-  if(convertToBmp)void pixMap_write_bmp16(p, outputfile);//convert and write to output file
+  if(convertToBmp)pixMap_write_bmp16(p, outputfile);//convert and write to output file
   if(sortPixels)pixMap_sort(p);//sort pixels by color
   pixMap_write(p,outputfile);
   pixMap_destroy(p);

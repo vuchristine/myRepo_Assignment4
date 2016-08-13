@@ -192,7 +192,7 @@ void pixMap_convert(pixMap *p, char *filename){
 			rgba tempB = p->pixArray[i][j].b >> 5;
 
 			//put these bits together as 16 bit
-			bit16 = (tempR << 11) | (tempG << 5) | (tempB);
+			bit16 = ((tempR << 11) | (tempG << 5) | (tempB));
 
 			//place the 16 bit into the bmp array
 			b->pixArray[i1][j] = bit16;

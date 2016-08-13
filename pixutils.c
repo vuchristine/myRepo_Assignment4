@@ -166,18 +166,22 @@ int pixMap_write(pixMap *p,char *filename){
 	return 0;
 }	 
 
-void pixMap_write_bmp16(pixMap *p, char *filename){
+void pixMap_convert(pixMap *p, char *filename){
 	//variables
 	int i = 0;
 	int j = 0;
-	rgba tempR, tempG, tempB;
+	int i1 = 0; //for b's pixel array
+	rgba tempR, tempG, tempB, bit16;
 
 	//initialize the bmp file
 	BMP16_map *b = BMP16_map_init(p->height, p->width, 0, 5, 6, 5);
 
 	//convert the pixels
-	for(i = 0; i < p->width; i++){
-		for(j = 0; j < p->height; j++){
+	for(i = 0; i < p->height; i++){
+		//for every i make b's i1 this
+		int i1 = p->height - i - 1;
+
+		for(j = 0; j < p->width; j++){
 			//take the first 5 bits for red
 			rgba tempR = p->pixArray[i][j].r >> 5;
 
@@ -188,10 +192,10 @@ void pixMap_write_bmp16(pixMap *p, char *filename){
 			rgba tempB = p->pixArray[i][j].b >> 5;
 
 			//put these bits together as 16 bit
-			rgba bit16 = (p->pixArray[i][j].r << 11) | (p->pixArray[i][j].g << 5) | (tempB);
+			bit16 = (tempR << 11) | (tempG << 5) | (tempB);
 
 			//place the 16 bit into the bmp array
-			b->pixArray[i][j] = bit16;
+			b->pixArray[i1][j] = bit16;
 		}
 	}
 
@@ -202,18 +206,34 @@ void pixMap_write_bmp16(pixMap *p, char *filename){
 	BMP16_map_destroy(b);
 }
 
+//compares sums of rgb
+static int pixMap_cmp(const void *a, const void *b){
+	//compares the sum of r g and b
+	//variables
+	const rgba *ra =(rgba*) a;
+	const rgba *rb =(rgba*) b;
+	int i = 0;
+	int sumA = 0;
+	int sumB = 0;
+
+	//for as long as i is not size of rgba
+	for(i = 0; i < sizeof(rgba); i++){
+		//add sum of first
+		sumA = ra->r + ra->b + ra->g;
+
+		//add sum of second
+		sumB = rb->r + rb->b + rb->g;
+	}
+
+	//compare sums
+	if(sumA < sumB) return -1;
+
+	if(sumA == sumB) return 0;
+
+	return 1;
+}
+
 void pixMap_sort(pixMap *p){
 	//compares the sum of r g and b
 	qsort(p->image, p->width, p->height, sizeof(rgba), pixMap_cmp);
 }
-
-//compares sums of rgb
-static int pixMap_cmp(const void *a, const void *b){
-	//compares the sum of r g and b
-	const rgba *ra =(rgba*) a;
-	const rgba *rb =(rgba*) b;
-
-	//return the difference
-	return(ra->r - rb->r);
-}
-

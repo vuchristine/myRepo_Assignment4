@@ -166,7 +166,7 @@ int pixMap_write(pixMap *p,char *filename){
 	return 0;
 }	 
 
-void pixMap_convert(pixMap *p, char *filename){
+void pixMap_write_bmp16(pixMap *p, char *filename){
 	//variables
 	int i = 0;
 	int j = 0;
